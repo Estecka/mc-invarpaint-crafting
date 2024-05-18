@@ -1,0 +1,43 @@
+{
+	"schemaVersion": 1,
+	"id": "invarpaint-crafting",
+	"version": "${version}",
+
+	"name": "Invarpaint: Crafting",
+	"description": "Adds randomized crafting recipes for paintings variants.",
+	"authors": [
+		"Estecka",
+		"Andrew Grant"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/invarpaint-crafting",
+		"issues":  "https://github.com/Estecka/mc-invarpaint-crafting/issues",
+		"sources": "https://github.com/Estecka/mc-invarpaint-crafting"
+	},
+	"license": "GNU AGPLv3",
+
+	"icon": "assets/invarpaint/crafting-icon.png",
+	"custom": {
+		"modmenu":{
+			"badges": ["deprecated"],
+			"parent": "invariablepaintings"
+		}
+	},
+
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"tk.estecka.invarpaint.crafting.InvarpaintCraftingAddon"
+		]
+	},
+	"mixins": [
+		"invarpaint-crafting.mixins.json"
+	],
+	"depends": {
+		"minecraft": "~1.20.5",
+		"invariablepaintings": "^2.0.0",
+		"fabricloader": ">=0.15.10",
+		"fabric-api": "*",
+		"java": ">=21"
+	}
+}
