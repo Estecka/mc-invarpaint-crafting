@@ -22,6 +22,6 @@ public abstract class SynchronizeRecipesS2CPacketMixin{
 	 */
 	@Inject(method="<init>(Ljava/util/Collection;)V", at=@At("TAIL"))
 	private void SkipServerOnly(Collection<RecipeEntry<?>> recipes, CallbackInfo info){
-		this.recipes = this.recipes.stream().filter(r -> r.value() instanceof IUnsyncRecipe unsync && !unsync.DontSync()).toList();
+		this.recipes = this.recipes.stream().filter(r -> !(r.value() instanceof IUnsyncRecipe unsync && unsync.DontSync())).toList();
 	}
 }
