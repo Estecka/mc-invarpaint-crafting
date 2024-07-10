@@ -12,9 +12,9 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.input.RecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.CraftingScreenHandler;
 import net.minecraft.text.MutableText;
@@ -25,8 +25,8 @@ import tk.estecka.invarpaint.crafting.IObfuscatedRecipe;
 @Mixin(CraftingScreenHandler.class)
 public class CraftingScreenHandlerMixin
 {
-	@WrapOperation( method="updateResult", at=@At( value="INVOKE", target="net/minecraft/recipe/CraftingRecipe.craft (Lnet/minecraft/inventory/Inventory;Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;)Lnet/minecraft/item/ItemStack;") )
-	static private ItemStack	ShouldObfuscate(CraftingRecipe recipe, Inventory input, RegistryWrapper.WrapperLookup wrapper, Operation<ItemStack> original, @Share("obf") LocalBooleanRef doObfuscate){
+	@WrapOperation( method="updateResult", at=@At( value="INVOKE", target="net/minecraft/recipe/CraftingRecipe.craft(Lnet/minecraft/recipe/input/RecipeInput;Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;)Lnet/minecraft/item/ItemStack;") )
+	static private ItemStack	ShouldObfuscate(CraftingRecipe recipe, RecipeInput input, RegistryWrapper.WrapperLookup wrapper, Operation<ItemStack> original, @Share("obf") LocalBooleanRef doObfuscate){
 		if (recipe instanceof IObfuscatedRecipe obfRecipe && obfRecipe.IsObfuscated())
 			doObfuscate.set(true);
 		return original.call(recipe, input, wrapper);
