@@ -3,7 +3,7 @@ package tk.estecka.invarpaint.crafting;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
@@ -16,18 +16,20 @@ import net.minecraft.util.Identifier;
  * for crafting  is capped to 1. The input variant is then  used as a parameter,
  * affecting which partition the crafting result will be pulled from.
  */
-public class Partition 
+public class Partition
 {
+	private final Registry<PaintingVariant> paintings;
 	private int index;
 	private int size;
 
-	public Partition(int size){
+	public Partition(Registry<PaintingVariant> registry, int size){
+		this.paintings = registry;
 		this.index = 0;
 		this.size = size;
 	}
 
 	/**
-	 * @param inputVariant 
+	 * @param inputVariant
 	 * The variant  of the painting  placed into  the crafting,  or null  if the
 	 * painting is blank. Will fallback to null if the id is invalid or does not
 	 * exist.
@@ -41,12 +43,12 @@ public class Partition
 	 * direction flipped. So it is always possible to progress in both direction
 	 * by alternating with the correct dyes.
 	 */
-	static public Partition FromIngredients(@Nullable String inputVariant, int combinationMax, int combinationRank){
-		Partition r = new Partition(combinationMax);
+	static public Partition FromIngredients(Registry<PaintingVariant> paintings, @Nullable String inputVariant, int combinationMax, int combinationRank){
+		Partition r = new Partition(paintings, combinationMax);
 
 		Identifier id;
-		if ((null!=inputVariant) && (null!=(id=Identifier.tryParse(inputVariant))) && Registries.PAINTING_VARIANT.containsId(id)) {
-			int rawId = Registries.PAINTING_VARIANT.getRawId(Registries.PAINTING_VARIANT.get(id));
+		if ((null!=inputVariant) && (null!=(id=Identifier.tryParse(inputVariant))) && paintings.containsId(id)) {
+			int rawId = paintings.getRawId(paintings.get(id));
 			int inputRank = rawId % r.size;
 			r.index = rawId / r.size;
 
@@ -68,15 +70,15 @@ public class Partition
 	public Optional<? extends RegistryEntry<PaintingVariant>>	GetVariant(int rank){
 		int index = (this.index * this.size) + rank;
 
-		if (index >= Registries.PAINTING_VARIANT.size())
+		if (index >= paintings.size())
 			index = rank;
 
-		return Registries.PAINTING_VARIANT.getEntry(index);
+		return paintings.getEntry(index);
 	}
 
 	public Partition Next(){
 		++this.index;
-		if (Registries.PAINTING_VARIANT.size() <= (this.index * this.size))
+		if (paintings.size() <= (this.index * this.size))
 			this.index = 0;
 		return this;
 	}
@@ -84,7 +86,7 @@ public class Partition
 	public Partition Previous(){
 		--this.index;
 		if (this.index < 0)
-			this.index = Registries.PAINTING_VARIANT.size() / this.size;
+			this.index = paintings.size() / this.size;
 		return this;
 	}
 

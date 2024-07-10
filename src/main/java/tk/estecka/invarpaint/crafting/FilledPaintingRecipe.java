@@ -4,15 +4,16 @@ import java.util.HashSet;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
-import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
@@ -31,6 +32,10 @@ implements IUnsyncRecipe, IObfuscatedRecipe
 	public final int dyesMin, dyesMax;
 	public final boolean canCreate, canDerive;
 	public final boolean isObfuscated;
+
+	// Hacky way to gain direct access to the painting registry. Might break easily.
+	// Registry wrappers are way too dumbed down of any use.
+	private Registry<PaintingVariant> paintingRegistry;
 
 	static public void Register(){
 		Registry.register(Registries.RECIPE_SERIALIZER, ID, SERIALIZER);
@@ -62,12 +67,13 @@ implements IUnsyncRecipe, IObfuscatedRecipe
 	}
 
 	@Override
-	public boolean matches(RecipeInputInventory ingredients, World world){
+	public boolean matches(CraftingRecipeInput ingredients, World world){
 		boolean hasPainting = false;
 		var dyeSet = new HashSet<DyeItem>(8);
+		this.paintingRegistry = world.getRegistryManager().get(RegistryKeys.PAINTING_VARIANT);
 
-		for (int i=0; i<ingredients.size(); ++i){
-			ItemStack stack = ingredients.getStack(i);
+		for (int i=0; i<ingredients.getSize(); ++i){
+			ItemStack stack = ingredients.getStackInSlot(i);
 			if (stack.getItem() instanceof DyeItem dye){
 				if(dyeSet.contains(dye))
 					return false;
@@ -86,13 +92,13 @@ implements IUnsyncRecipe, IObfuscatedRecipe
 	}
 
 	@Override
-	public ItemStack craft(RecipeInputInventory ingredients, RegistryWrapper.WrapperLookup wrapper){
+	public ItemStack craft(CraftingRecipeInput ingredients, RegistryWrapper.WrapperLookup wrapper){
 		String canvasVariant = null;
 		short dyeMask = 0;
-		for (int i=0; i<ingredients.size(); ++i){
-			ItemStack item = ingredients.getStack(i);
+		for (int i=0; i<ingredients.getSize(); ++i){
+			ItemStack item = ingredients.getStackInSlot(i);
 			if (item.isOf(Items.PAINTING))
-				canvasVariant = PaintStackUtil.GetVariantId(item);
+				canvasVariant = PaintStackUtil.GetVariantName(item);
 			if (item.getItem() instanceof DyeItem dye)
 				dyeMask |= 1 << dye.getColor().getId();
 		}
@@ -109,12 +115,12 @@ implements IUnsyncRecipe, IObfuscatedRecipe
 		}
 	}
 
-	static public Optional<?extends RegistryEntry<PaintingVariant>>	CraftVariant(@Nullable String inputVariant, short dyeMask, int dyeCount){
-		if (Registries.PAINTING_VARIANT.size() <= DyeCodeUtil.COMBINATION_MAX[dyeCount])
-			return DyeCodeUtil.DyemaskToVariant(dyeMask);
+	public Optional<?extends RegistryEntry<PaintingVariant>>	CraftVariant(@Nullable String inputVariant, short dyeMask, int dyeCount){
+		if (paintingRegistry.size() <= DyeCodeUtil.COMBINATION_MAX[dyeCount])
+			return DyeCodeUtil.DyemaskToVariant(paintingRegistry, dyeMask);
 		else {
 			int rank = DyeCodeUtil.MaskToRank(dyeMask);
-			return Partition.FromIngredients(inputVariant, DyeCodeUtil.COMBINATION_MAX[dyeCount], rank).GetVariant(rank);
+			return Partition.FromIngredients(paintingRegistry, inputVariant, DyeCodeUtil.COMBINATION_MAX[dyeCount], rank).GetVariant(rank);
 		}
 	}
 

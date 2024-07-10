@@ -2,7 +2,7 @@ package tk.estecka.invarpaint.crafting;
 
 import java.util.Optional;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 
 /**
@@ -26,12 +26,12 @@ public class DyeCodeUtil
 /* Fast Lane                                                                  */
 /******************************************************************************/
 
-	static public Optional<? extends RegistryEntry<PaintingVariant>>	DyemaskToVariant(short mask){
-		return Registries.PAINTING_VARIANT.getEntry(RankToVariant(MaskToRank(mask), MaskSize(mask)));
+	static public Optional<? extends RegistryEntry<PaintingVariant>>	DyemaskToVariant(Registry<PaintingVariant> registry, short mask){
+		return registry.getEntry(RankToVariant(registry, MaskToRank(mask), MaskSize(mask)));
 	}
 
-	static public short	VariantToDyemask(PaintingVariant variant, int setSize){
-		return RankToMask(VariantToRank(Registries.PAINTING_VARIANT.getRawId(variant), setSize), setSize);
+	static public short	VariantToDyemask(Registry<PaintingVariant> registry, PaintingVariant variant, int setSize){
+		return RankToMask(VariantToRank(registry, registry.getRawId(variant), setSize), setSize);
 	}
 
 /******************************************************************************/
@@ -69,14 +69,14 @@ public class DyeCodeUtil
 	/**
 	 * Converts any combination rank to a variant's index.
 	 */
-	static public int	RankToVariant(int rank, int setSize){
-		return rank * Registries.PAINTING_VARIANT.size() / COMBINATION_MAX[setSize];
+	static public int	RankToVariant(Registry<PaintingVariant> registry, int rank, int setSize){
+		return rank * registry.size() / COMBINATION_MAX[setSize];
 	}
 	/**
 	 * Converts a variant's index to the rank of the first corresponding combination.
 	 */
-	static public int	VariantToRank(int rawId, int setSize){
-		return CeilDivide(rawId * COMBINATION_MAX[setSize], Registries.PAINTING_VARIANT.size());
+	static public int	VariantToRank(Registry<PaintingVariant> registry, int rawId, int setSize){
+		return CeilDivide(rawId * COMBINATION_MAX[setSize], registry.size());
 	}
 
 	static int CeilDivide(int numerator, int denomitator){
