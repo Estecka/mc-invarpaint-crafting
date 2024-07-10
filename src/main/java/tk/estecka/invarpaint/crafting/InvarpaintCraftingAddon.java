@@ -30,7 +30,7 @@ implements ModInitializer
 	public static void RegisterPack(String id, String displayName, boolean defaultEnabled) {
 		ModContainer mod = (ModContainer)FabricLoader.getInstance().getModContainer(MODID).get();
 		ResourceManagerHelper.registerBuiltinResourcePack(
-			new Identifier(MODID, id),
+			Identifier.of(MODID, id),
 			mod,
 			Text.literal(displayName),
 			defaultEnabled ? ResourcePackActivationType.DEFAULT_ENABLED : ResourcePackActivationType.NORMAL

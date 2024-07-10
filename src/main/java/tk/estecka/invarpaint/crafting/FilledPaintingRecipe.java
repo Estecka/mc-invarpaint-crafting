@@ -25,7 +25,7 @@ public class FilledPaintingRecipe
 extends SpecialCraftingRecipe
 implements IUnsyncRecipe, IObfuscatedRecipe
 {
-	static public final Identifier ID = new Identifier("invarpaint", "crafting_special_painting_creation");
+	static public final Identifier ID = Identifier.of("invarpaint", "crafting_special_painting_creation");
 	static public final RecipeSerializer<FilledPaintingRecipe> SERIALIZER = new FilledPaintingRecipeSerializer();
 
 	public final int dyesMin, dyesMax;

@@ -18,7 +18,7 @@ public class PaintingReplicationRecipe
 extends SpecialCraftingRecipe
 implements IUnsyncRecipe
 {
-	static public final Identifier ID = new Identifier("invarpaint", "crafting_special_painting_replication");
+	static public final Identifier ID = Identifier.of("invarpaint", "crafting_special_painting_replication");
 	static public final SpecialRecipeSerializer<PaintingReplicationRecipe> SERIALIZER = new SpecialRecipeSerializer<PaintingReplicationRecipe>(PaintingReplicationRecipe::new);
 
 	static public void Register(){
