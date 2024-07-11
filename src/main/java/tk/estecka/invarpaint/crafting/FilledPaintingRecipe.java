@@ -34,7 +34,7 @@ implements IUnsyncRecipe, IObfuscatedRecipe
 	public final boolean isObfuscated;
 
 	// Hacky way to gain direct access to the painting registry. Might break easily.
-	// Registry wrappers are way too dumbed down of any use.
+	// Registry wrappers are way too dumbed down to be of any use.
 	private Registry<PaintingVariant> paintingRegistry;
 
 	static public void Register(){
