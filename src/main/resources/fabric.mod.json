@@ -34,9 +34,9 @@
 		"invarpaint-crafting.mixins.json"
 	],
 	"depends": {
-		"minecraft": "~1.20.5",
-		"invariablepaintings": "^2.0.0",
-		"fabricloader": ">=0.15.10",
+		"minecraft": "~1.21",
+		"invariablepaintings": "^2.1.0",
+		"fabricloader": ">=0.15.11",
 		"fabric-api": "*",
 		"java": ">=21"
 	}
